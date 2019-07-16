@@ -1,0 +1,81 @@
+---
+- hosts: k8s-master, k8s-node
+  tasks:
+   - name: Docker
+     apt: pkg=docker.io state=installed update_cache=true
+
+   - name: Add repo for kube
+     apt_repository: repo='deb http://apt.kubernetes.io/ kubernetes-xenial main' state=present
+     become: true
+
+   - name: Installing transport-https
+     apt: pkg=apt-transport-https state=installed update_cache=true
+     become: true
+
+   - name: Add key for kubernetes
+     apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+   - name: Installing kubectl
+     apt: pkg=kubectl state=installed update_cache=true
+     become: true
+    
+   - name: Installing kubeadm
+     apt: pkg=kubeadm state=installed update_cache=true
+     become: true
+
+   - name: Installing kubelet
+     apt: pkg=kubelet state=installed update_cache=true
+     become: true
+    
+   - name: adding entry to host file
+     shell: echo "172.16.0.50 k8s-master-node-1" >> /etc/hosts
+     become: true
+
+   - name: adding entry to host file
+     shell: echo "172.16.0.51 k8s-node-1" >> /etc/hosts
+     become: true
+
+   - name: adding entry to host file
+     shell: echo "172.16.0.52 k8s-node-2" >> /etc/hosts
+     become: true
+
+   - name: adding entry to host file
+     shell: echo "172.16.0.53 k8s-node-3" >> /etc/hosts
+     become: true
+
+
+- hosts: k8s-master
+  tasks:
+  - name: Adding cgroup to the /etc/system/kubelet
+    shell: echo "Environment=”cgroup-driver=systemd/cgroup-driver=cgroupfs”" >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    become: true
+  
+  - name: Init kube cluser
+    shell: kubeadm init --apiserver-advertise-address=172.16.0.50 --pod-network-cidr=10.244.0.0/16 | cat
+    ignore_errors: yes
+    become: true
+
+  - name: Create the .kube subfolder
+    file:
+      path: /home/ubuntu/.kube
+      state: directory
+
+  - name: Copy admin.conf to the .kube subfolder
+    command: cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+      
+  - name: Change ownership of subfolder
+    file:
+      path: home/ubuntu/.kube
+      state: directory
+      recurse: yes
+      owner: ubuntu
+      group: ubuntu
+
+  - name: Create Kubernetes network (flanel)
+    sudo_user: ubuntu
+    shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
+
+  - name:
+    git:
+      repo: https://github.com/dockersamples/example-voting-app
+      dest: /home/ubuntu/example-voting-app
