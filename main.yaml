@@ -1,2 +1,2 @@
-- include: /home/ubuntu/kube.yaml
-- include: /home/ubuntu/kube_init.yaml
+- include: /home/ubuntu/ansible_kubernetes/kube.yaml
+- include: /home/ubuntu/ansible_kubernetes/kube_init.yaml
