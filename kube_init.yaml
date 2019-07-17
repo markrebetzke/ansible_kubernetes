@@ -1,0 +1,10 @@
+---
+- hosts: k8s-node
+  tasks:
+  - name: Adding nodes to the cluster
+    become: true
+    shell: "{{ hostvars['node1']['k8scluster']['stdout'] }} "
+    register: result
+
+  - debug: msg="{{ result.stdout }}"
+  #- debug: msg="{{ hostvars['node1']['k8scluster']['stdout'] }} "

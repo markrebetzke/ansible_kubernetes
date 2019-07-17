@@ -75,17 +75,21 @@
     sudo_user: ubuntu
     shell: sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
   
+  - name: Create vars file
+    shell: touch /tmp/join_command.yaml
+  
   - name: Get join cluster command
     sudo_user: ubuntu
     shell: sudo kubeadm token create --print-join-command
-    register: kubeadm_join
+    register: k8scluster
     
-  - name:
-    git:
-      repo: https://github.com/dockersamples/example-voting-app
-      dest: /home/ubuntu/example-voting-app
+  - name: Test
+    set_fact: join="{{ k8scluster.stdout }}"
 
-- hosts: k8s-node
-  tasks:
-  - name: Adding slave nodes to the "172.16.0.50 k8s-master-node-1
-    shell: kube_adm.stout
+  # # - name: Update variable file
+  # #   shell: echo {{ k8scluster.stdout }} > /tmp/join_command.yaml
+
+  # - name:
+  #   git:
+  #     repo: https://github.com/dockersamples/example-voting-app
+  #     dest: /home/ubuntu/example-voting-app
