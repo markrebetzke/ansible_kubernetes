@@ -1,0 +1,22 @@
+---
+- hosts: local
+  connection: local
+  tasks:
+    - name: users
+      shell: w
+      register: w
+    - debug: var=w
+    - name: Copy file
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu
+        remote_src: true
+        owner: ubuntu
+        group: ubuntu
+        mode: 0600
+      become: true
+    - name: line insert
+      lineinfile:
+        name: /home/ubuntu/.bashrc
+        line: 'export KUBECONFIG=/home/ubuntu/admin.conf'
+        insertbefore: BOF
