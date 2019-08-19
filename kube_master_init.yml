@@ -1,5 +1,5 @@
 ---
-- hosts: k8s-master
+- hosts: k8s-master-*
   tasks:
     - name: users
       shell: w
