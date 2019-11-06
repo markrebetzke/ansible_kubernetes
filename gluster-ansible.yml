@@ -13,7 +13,7 @@
         #filename: undefined # not required. Sets the name of the source list file in sources.list.d. Defaults to a file name based on the repository source url. The .list extension will be automatically added.
 
   #- name: Ensure GlusterFS will reinstall if the PPA was just added
-  #  apt: 
+  #  apt:
   #    name:
   #      - glusterfs-server
   #      - glusterfs-client
@@ -21,13 +21,73 @@
   #  when: glusterfs_ppa_added.changed
   #  tags: ['skip_ansible_lint']
 
-
+### Install dependencies
   - name: Ensure GlusterFS is installed
     become: true
-    apt: 
-      name: 
+    apt:
+      name:
         - software-properties-common
         - glusterfs-server
         - glusterfs-client
         - glusterfs-common
       state: present
+
+### Reload glusterd
+  - name: reload service glusterd, in all cases
+    become: true
+    systemd:
+      name: glusterd
+      state: started
+
+## Create gluter volume directory
+  - name: Create gluster volume directory
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /glusterfs/kube_gluster
+      state: directory
+      mode: '0755'
+## Create gluster mnt location
+  - name: Create gluster mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /mnt/kube_fs
+      state: directory
+      mode: '0755'
+
+## Create gluster volume
+  - name: create gluster volume
+    become: true
+    gluster_volume:
+      state: present
+      force: yes
+      replicas: 2
+      name: kube_vol
+      bricks: /glusterfs/kube_gluster
+      cluster:
+        - k8s-master-1
+        - k8s-slave-1
+        - k8s-slave-2
+        - k8s-slave-3
+
+  - name: start gluster volume
+    become: true
+    gluster_volume:
+      state: started
+      name: kube_vol
+  #- name: remove volume
+  #  become: true
+  #  gluster_volume:
+  #    state: absent
+  #    name: Vol1
+
+  - name: Mount the gluster volume
+    become: true
+    mount:
+      path: /mnt/kube_fs
+      src: k8s-master-1:/Vol1
+      fstype: glusterfs
+      state: mounted
