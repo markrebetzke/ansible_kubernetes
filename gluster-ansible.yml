@@ -88,6 +88,6 @@
     become: true
     mount:
       path: /mnt/kube_fs
-      src: k8s-master-1:/Vol1
+      src: k8s-master-1:/kube_vol
       fstype: glusterfs
       state: mounted
