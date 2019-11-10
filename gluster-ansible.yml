@@ -54,29 +54,9 @@
     file:
       owner: ubuntu
       group: ubuntu
-      path: /mnt/kube_fs
+      path: /kube_fs
       state: directory
       mode: '0755'
-
-## Create gluster mnt location
-  - name: Create frontend mnt location
-    become: true
-    file:
-      owner: ubuntu
-      group: ubuntu
-      path: /mnt/kube_fs/frontend
-      state: directory
-      mode: '0777'
-
-## Create gluster mnt location
-  - name: Create gluster mnt location
-    become: true
-    file:
-      owner: ubuntu
-      group: ubuntu
-      path: /mnt/kube_fs/backend
-      state: directory
-      mode: '0777'
 
 ## Create gluster volume
   - name: create gluster volume
@@ -88,10 +68,10 @@
       name: kube_vol
       bricks: /glusterfs/kube_gluster
       cluster:
-        - k8s-master-1
-        - k8s-slave-1
-        - k8s-slave-2
-        - k8s-slave-3
+        - 172.16.0.50
+        - 172.16.0.51
+        - 172.16.0.52
+        - 172.16.0.53
 
   - name: start gluster volume
     become: true
@@ -107,7 +87,27 @@
   - name: Mount the gluster volume
     become: true
     mount:
-      path: /mnt/kube_fs
-      src: k8s-master-1:/kube_vol
+      path: /kube_fs
+      src: 172.16.0.50:/kube_vol
       fstype: glusterfs
       state: mounted
+      
+ ## Create frontend mnt location
+  - name: Create frontend mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /kube_fs/frontend
+      state: directory
+      mode: '0777'
+
+## Create backend mnt location
+  - name: Create gluster mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /kube_fs/backend
+      state: directory
+      mode: '0777'
