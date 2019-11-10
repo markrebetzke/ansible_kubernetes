@@ -58,6 +58,26 @@
       state: directory
       mode: '0755'
 
+## Create gluster mnt location
+  - name: Create frontend mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /mnt/kube_fs/frontend
+      state: directory
+      mode: '0777'
+
+## Create gluster mnt location
+  - name: Create gluster mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /mnt/kube_fs/backend
+      state: directory
+      mode: '0777'
+
 ## Create gluster volume
   - name: create gluster volume
     become: true
