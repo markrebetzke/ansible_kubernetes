@@ -68,10 +68,10 @@
       name: kube_vol
       bricks: /glusterfs/kube_gluster
       cluster:
-        - 172.16.0.50
-        - 172.16.0.51
-        - 172.16.0.52
-        - 172.16.0.53
+        - k8s-master-node-1
+        - k8s-node-1
+        - k8s-node-2
+        - k8s-node-3
 
   - name: start gluster volume
     become: true
@@ -88,7 +88,7 @@
     become: true
     mount:
       path: /kube_fs
-      src: 172.16.0.50:/kube_vol
+      src: k8s-master-node-1:/kube_vol
       fstype: glusterfs
       state: mounted
       
