@@ -1,5 +1,5 @@
 ---
-- hosts: kube-node
+- hosts: k8s-master-node-1
   tasks:
   - name: Mount the gluster volume
     become: true
