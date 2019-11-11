@@ -1,2 +1,3 @@
 - import_playbook: glusterfs.yml
+- import_playbook: gluster_volume.yml
 - import_playbook: directories.yml
