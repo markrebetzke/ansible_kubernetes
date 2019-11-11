@@ -1,1 +1,10 @@
-
+---
+- hosts: kube-node
+  tasks:
+  - name: Mount the gluster volume
+    become: true
+    mount:
+      path: /kube_fs
+      src: k8s-master-node-1:/kube_vol
+      fstype: glusterfs
+      state: mounted
