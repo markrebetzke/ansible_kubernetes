@@ -1,0 +1,22 @@
+---
+- hosts: all
+  tasks:
+  ## Create frontend mnt location
+  - name: Create frontend mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /kube_fs/frontend
+      state: directory
+      mode: '0777'
+
+## Create backend mnt location
+  - name: Create gluster mnt location
+    become: true
+    file:
+      owner: ubuntu
+      group: ubuntu
+      path: /kube_fs/backend
+      state: directory
+      mode: '0777'
