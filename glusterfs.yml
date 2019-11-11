@@ -39,6 +39,16 @@
       name: glusterd
       state: started
 
+## Create Trusted storage pool
+  - name: Create a trusted storage pool
+    gluster_peer:
+          state: present
+          nodes:
+            - k8s-master-node-1
+            - k8s-node-1
+            - k8s-node-2
+            - k8s-node-3
+            
 ## Create gluter volume directory
   - name: Create gluster volume directory
     become: true
