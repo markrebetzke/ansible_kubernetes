@@ -41,6 +41,7 @@
 
 ## Create Trusted storage pool
   - name: Create a trusted storage pool
+    become: true
     gluster_peer:
           state: present
           nodes:
