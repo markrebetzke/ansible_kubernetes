@@ -83,11 +83,3 @@
   #  gluster_volume:
   #    state: absent
   #    name: Vol1
-
-  - name: Mount the gluster volume
-    become: true
-    mount:
-      path: /kube_fs
-      src: k8s-master-node-1:/kube_vol
-      fstype: glusterfs
-      state: mounted
