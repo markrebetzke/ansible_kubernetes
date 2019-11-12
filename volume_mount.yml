@@ -1,5 +1,5 @@
 ---
-- hosts: k8s-master-1
+- hosts: all
   tasks:
   - name: Mount the gluster volume
     become: true
